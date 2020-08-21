@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+	<!-- Required meta tags -->
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  {% block meta %}{% endblock %}
+	<!-- documentation at http://getbootstrap.com/docs/4.1/, alternative themes at https://bootswatch.com/ -->
+	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
+
+	<link href="/static/styles.css" rel="stylesheet">
+
+	<script src="https://code.jquery.com/jquery-3.3.1.min.js">
+	</script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js">
+	</script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js">
+	</script>
+
+
+  <script>{% block script %}{% endblock %}</script>
+	<title>{% block title %}{% endblock %}</title>
+  <style>{% block style %}{% endblock %}</style>
+
+</head>
+
+<body>
+
+<script
+    src="https://www.paypal.com/sdk/js?client-id=AQJQP05fb2LdhlBGIpvERwtAzlEFv2X9K8wSW7_zHsy9q9OlTh_o8Tvrj6i7fcXkY9K1NnXlR64fA671&currency=CAD">
+</script>
+
+	<nav class="navbar navbar-expand-md navbar-light bg-light border">
+		<a class="navbar-brand" href="/">Bash<span id="titleanim">_</span></a>
+            <button aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler" data-target="#navbar" data-toggle="collapse" type="button">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbar">
+                    <ul class="navbar-nav ml-auto mt-2">
+                        <!-- shopping cart code borrowed from https://www.nicesnippets.com/snippet/bootstrap-4-shopping-cart-dropdown-in-header-->
+                        <button onclick="window.location.href='{{ url_for('checkout',purchased=0) }}';" type="button" class="btn btn-info mr-2" data-toggle="dropdown">
+                        <i class="fa fa-shopping-cart" aria-hidden="true"></i> Cart <span class="badge badge-pill badge-danger">{{ numItems }}</span>
+                        </button>
+                        <!-- end of borrowed code -->
+                        <!-- no need to register for an account, only for making the admin account -->
+                        <!--<li class="nav-item "><a class="nav-link" href="/register">Register</a></li>-->
+                        <li class="nav-item"><a class="nav-link" href="/login">Admin</a></li>
+                    </ul>
+            </div>
+        </nav>
+
+        <main class="container-fluid p-5">
+            {% block main %}{% endblock %}
+        </main>
+
+        <script>
+          $(document).ready(function(){
+            let d = new Date();
+            let day=d.getUTCDate();
+            let month=d.getUTCMonth()+1;
+            let year=d.getUTCFullYear();
+            console.log(day+"/"+month+"/"+year);
+            document.getElementById("year").innerHTML = day+"/"+month+"/"+year;
+          })
+        </script>
+
+        <footer class="footer bg-light border mt-auto p-3">
+          <div class="container">
+            <span class="text-muted">bash vintage <span id="year">today</span> | </span>
+            <a href="https://www.depop.com/bashvintage/">
+              <span class="text-muted">depop </span>
+              <img style="width:25px;" src="https://i.imgur.com/uAblUh4.png">
+            </a>
+            <span class="text-muted"> | thrifting towards a greener world.</span>
+          </div>
+        </footer>
+
+    </body>
+
+</html>

@@ -1,0 +1,57 @@
+#titleanim{
+  animation-name:test;
+  animation-duration:1.8s;
+  animation-iteration-count:infinite;
+  animation-timing-function:steps(2,end);
+
+}
+@keyframes test{
+  0%{
+    font-size:0%;
+  }
+  100%{
+    font-size:200%;
+  }
+}
+.test{
+  width:400px;
+  height:300px;
+  margin:5px;
+  margin-top:28px;
+  background-size:400px;
+  background-repeat:no-repeat;
+  position: relative;
+}
+.label{
+  position: absolute;
+  width:400px;
+  height:25px;
+  right:-1px;
+  top:-25px;
+}
+.label-2{
+  position: absolute;
+  height:25px;
+  left:360px;
+  top:-25px;
+}
+
+.sold img,.sold div{
+  opacity:0.6;
+}
+.item{
+  transition: transform 0.4s;
+}
+.item:hover{
+  transform: scale(1.01);
+}
+.footer div img{
+  /*filter:grayscale(50%);*/
+}
+
+.footer div a{
+  text-decoration: none;
+}
+.flex-fixed-width-item {
+    flex: 0 0 100px;
+}

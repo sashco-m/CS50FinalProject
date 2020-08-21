@@ -1,0 +1,92 @@
+{% extends "layout.html" %} {% block script %} {% endblock %} {% block title %} {{ items[3] }} ...BASH {% endblock %} {%
+block main %}
+<script>
+	paypal.Buttons({
+    createOrder: function(data, actions) {
+      // This function sets up the details of the transaction, including the amount and line item details.
+      return actions.order.create({
+        purchase_units: [{
+          amount: {
+            value: '{{ items[7]|safe }}'
+          }
+        }]
+      });
+    },
+    onApprove: function(data, actions) {
+      // This function captures the funds from the transaction.
+      return actions.order.capture().then(function(details) {
+        // This function shows a transaction success message to your buyer.
+        //alert('Transaction completed by ' + details.payer.name.given_name);
+
+        window.location.href = "{{ url_for('item',num=items[0],purchased=1) }}";
+      });
+    },
+    onShippingChange: function(data, actions) {
+        if (data.shipping_address.country_code !== 'CA') {
+            return actions.reject();
+        }
+
+        return actions.resolve();
+    }
+  }).render('#paypal-button-container');
+  //This function displays Smart Payment Buttons on your web page.
+
+</script>
+
+<div class="container">
+	<div class="row">
+		<div class=" col-md">
+			<div class="row">
+				<img class="border border-dark img-fluid m-2" src="{{ items[4] }}">
+        </div>
+        {% if items[5] %}
+        <div class="row">
+          <img class="border border-dark img-fluid m-2" src="{{ items[5] }}">
+        </div>
+        {% endif %}
+        {% if items[6] %}
+        <div class="row">
+          <img class="border border-dark img-fluid m-2" src="{{ items[6] }}">
+        </div>
+        {% endif %}
+      </div>
+      <div class="ml-5 col-md order-first order-md-last">
+        <h2>{{ items[3] }}</h2>
+        <p style="white-space: pre-wrap;">{{ items[8] }}</p> <!--keeps text formatted-->
+        <h5>
+          {% if items[9]==0 %}
+          xsmall
+          {% elif items[9]==1 %}
+          small
+          {% elif items[9]==2 %}
+          medium
+          {% elif items[9]==3 %}
+          large
+          {% elif items[9]==4 %}
+          xlarge          
+          {% endif %}
+        </h5>
+        <h3>${{ items[7] }}</h3>
+        {% if not inCart and items[2]==None %}
+          <form action="/item/{{ items[0] }}/0" method="POST">
+            <button name="submit_button" class="btn btn-outline-primary mb-3 p-2 btn-block" type="submit" value="add_to_cart">Add to cart</button>
+          </form>
+        {% elif items[2]==None %}
+          <button name="submit_button" class="btn btn-outline-primary mb-3 p-2 btn-block" type="submit" value="add_to_cart" disabled>In cart</button>
+        {% endif %}
+        {% if items[2]==None %}
+        <div id="paypal-button-container"></div>
+        {% else %}
+          <h3>purchased.</h3>
+        {% endif %}
+
+        {% if admin and items[2]==None%}
+          <form action="/item/{{ items[0] }}/1" method="POST">
+            <button name="submit_button" class="btn btn-danger mb-3 p-2 btn-block" type="submit" value="add_to_cart">ADMIN: mark as sold</button>
+          </form>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+{% endblock %}

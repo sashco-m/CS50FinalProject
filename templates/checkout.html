@@ -1,0 +1,165 @@
+<!--checkout page layout borrowed from https://mdbootstrap.com/docs/jquery/ecommerce/design-blocks/shopping-cart/ -->
+<!-- however it has been heavily modified, all the backend was completed myself as well as paypal, only general layout was borrowed-->
+{% extends "layout.html" %}
+
+
+{% block title %}
+    Checkout
+{% endblock %}
+
+{% block main %}
+<script>
+  paypal.Buttons({
+    createOrder: function(data, actions) {
+      // This function sets up the details of the transaction, including the amount and line item details.
+      return actions.order.create({
+        purchase_units: [{
+          amount: {
+            value: '{{ total }}'
+          }
+        }]
+      });
+    },
+    onApprove: function(data, actions) {
+      // This function captures the funds from the transaction.
+      return actions.order.capture().then(function(details) {
+        // This function shows a transaction success message to your buyer.
+        //alert('Transaction completed by ' + details.payer.name.given_name);
+
+        window.location.href = "{{ url_for('checkout',purchased=1) }}";
+      });
+    },
+    onShippingChange: function(data, actions) {
+        if (data.shipping_address.country_code !== 'CA') {
+            return actions.reject();
+        }
+
+        return actions.resolve();
+    }
+  }).render('#paypal-button-container');
+  //This function displays Smart Payment Buttons on your web page.
+</script>
+
+<!--Section: Block Content-->
+<section>
+
+  <!--Grid row-->
+  <div class="row">
+
+    <!--Grid column-->
+    <div class="col-lg-8">
+
+      <!-- Card -->
+      <div class="mb-3">
+        <div class="pt-4 wish-list">
+
+          <h5 class="mb-4">Cart (<span>{{ numItems }}</span> items)</h5>
+          {% for items in cart %}
+          <div class="row mb-4">
+            <div class="col-md-5 col-lg-3 col-xl-3">
+              <div style="cursor:pointer;" onclick="location.href='{{ url_for('item',num=items[0],purchased=0) }}';" class="mb-3 mb-md-0 item">
+                <!--add onclick to the item page-->
+                <img class="border rounded img-fluid w-100"
+                  src="{{ items[4] }}" alt="Sample">
+              </div>
+            </div>
+            <div class="col-md-7 col-lg-9 col-xl-9">
+              <div>
+                <div class="d-flex justify-content-between">
+                  <div>
+                    <h5>{{ items[3] }}</h5>
+                    <p class="mb-3 text-muted text-uppercase small">Size: 
+                       {% if items[9]==0 %}
+                       xsmall
+                       {% elif items[9]==1 %}
+                       small
+                       {% elif items[9]==2 %}
+                       medium
+                       {% elif items[9]==3 %}
+                       large
+                       {% elif items[9]==4 %}
+                       xlarge          
+                       {% endif %}
+                    </p>
+                    <!-- decide if you want to show the description or just the size-->
+                    <!--<p style="white-space: pre-wrap;" class="mb-3 text-muted text-uppercase small">
+                       {{ items[8] }}
+                    </p>-->
+                  </div>
+                </div>
+                <div class="d-flex justify-content-between align-items-center">
+                  <div>
+                    <!-- remove from session, refresh page //REPLACE WITH BUTTON W/ POST -->
+                    <form action="/checkout/0" method="POST">
+                      <button name="remove_from_cart" class="btn btn-outline-primary mb-3 p-1 btn-block" type="submit" value="{{items[0]}}"><svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-trash-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                      <path fill-rule="evenodd" d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5a.5.5 0 0 0-1 0v7a.5.5 0 0 0 1 0v-7z"/>
+                      </svg>Remove item</button>
+                    </form>
+                  </div>
+                  <p class="mb-0"><span><strong id="summary">${{ items[7] }}</strong></span></p class="mb-0">
+                </div>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+          <hr class="mb-4">
+
+          <p class="text-primary mb-0"><i class="fas fa-info-circle mr-1"></i> Adding
+            items to your cart does not mean booking them.</p>
+
+        </div>
+      </div>
+      <!-- Card -->
+
+      <!-- Card -->
+      <div class="mb-3">
+        <div class="pt-4">
+
+          <h5 class="mb-4">We accept</h5>
+
+          <img class="mr-2" width="45px"
+            src="https://mdbootstrap.com/wp-content/plugins/woocommerce-gateway-stripe/assets/images/visa.svg"
+            alt="Visa">
+          <img class="mr-2" width="45px"
+            src="https://mdbootstrap.com/wp-content/plugins/woocommerce-gateway-stripe/assets/images/amex.svg"
+            alt="American Express">
+          <img class="mr-2" width="45px"
+            src="https://mdbootstrap.com/wp-content/plugins/woocommerce-gateway-stripe/assets/images/mastercard.svg"
+            alt="Mastercard">
+          <img class="mr-2" width="45px"
+            src="https://mdbootstrap.com/wp-content/plugins/woocommerce/includes/gateways/paypal/assets/images/paypal.png"
+            alt="PayPal acceptance mark">
+        </div>
+      </div>
+      <!-- Card -->
+
+    </div>
+    <!--Grid column-->
+
+    <!--Grid column-->
+    <div class="col-lg-4">
+
+      <!-- Card -->
+      <div class="mb-3">
+        <div class="pt-4">
+
+          <h5 class="mb-3">Your total is: <span style="float:right;">${{ total }}</span></h5>
+          <!--total up the session -->
+          <!--replace with paypal-->
+
+          <div id="paypal-button-container"></div>
+
+        </div>
+      </div>
+      <!-- Card -->
+
+
+    </div>
+    <!--Grid column-->
+
+  </div>
+  <!-- Grid row -->
+
+</section>
+<!--Section: Block Content-->
+{% endblock %}

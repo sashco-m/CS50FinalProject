@@ -1,0 +1,169 @@
+
+{% extends "layout.html" %}
+
+
+{% block script %}
+$(document).ready(function(){
+/* $('.test').click(function(){
+      console.log( $(this).attr('id') );
+   });*/
+  //the initial test on whether user is mobile or desktop
+  let height=$(window).height(); // New height
+  let width=$(window).width(); // New width
+  if(height>width+100 || width<575){
+        $('#sortDisplay').removeClass('flex-row');
+        $('#sortDisplay').addClass('flex-column-reverse');
+  }
+  //finding out how the sort should be displayed
+  $(window).resize(function() {
+      // This will execute whenever the window is resized
+      let height=$(window).height(); // New height
+      let width=$(window).width(); // New width
+      //console.log(width)
+      //console.log(height)
+      if(height>width+100 || width<575){
+        $('#sortDisplay').removeClass('flex-row');
+        $('#sortDisplay').addClass('flex-column-reverse');
+      }
+      else{
+        $('#sortDisplay').addClass('flex-row');
+        $('#sortDisplay').removeClass('flex-column-reverse');
+      }
+    });
+
+});
+{% endblock %}
+
+{% block title %}
+  Homepage
+{% endblock %}
+
+{% block style %}
+  .bruh{
+    background-color:red;
+  }
+
+{% endblock %}
+
+{% block main %}
+<div id="sortDisplay" class="d-flex flex-row justify-content-between">
+  <h2 class="d-flex">New items</h2>
+    <form  action="/" method="post">
+      <div class="form-group row">
+        <label for="sort" class=" col-form-label col-3">sort by:</label>
+        <div class="col-7">
+          <select class="form-control" name="sort" id="sort">
+            <option value="dateAsc"
+            {% if sortMethod=="dateAsc" %}
+            selected
+            {% endif %}
+            >New to old</option>
+            <option value="dateDesc"
+            {% if sortMethod=="dateDesc" %}
+            selected
+            {% endif %}
+            >Old to new</option>
+            <option value="sizeAsc"
+            {% if sortMethod=="sizeAsc" %}
+            selected
+            {% endif %}
+            >Size ascending</option>
+            <option value="sizeDesc"
+            {% if sortMethod=="sizeDesc" %}
+            selected
+            {% endif %}
+            >Size descending</option>
+            <option value="priceAsc"
+            {% if sortMethod=="priceAsc" %}
+            selected
+            {% endif %}
+            >Price: low to high</option>
+            <option value="priceDesc"
+            {% if sortMethod=="priceDesc" %}
+            selected
+            {% endif %}
+            >Price: high to low</option>
+          </select>
+        </div>
+        <button name="submit_button" class="btn btn-primary col-2" type="submit" value="sortItem">sort</button>
+      </div>
+    </form>
+</div>
+<div class="row justify-content-md-center">
+  {% for items in unsold %}
+    <div class="container-xl m-2" style="max-width:500px;">
+      <div onclick="location.href='{{ url_for('item',num=items[0],purchased=0) }}';" id="{{ items[0] }}" class="col-md-auto item" style="cursor: pointer;">
+        <div style="width:100%" class="p-1 border border-dark border-bottom-0">
+          <div style="display:inline-block;">{{ items[3] }} ~</div>
+          <div style="display:inline-block;">
+          {% if items[9]==0 %}
+          xsmall
+          {% elif items[9]==1 %}
+          small
+          {% elif items[9]==2 %}
+          medium
+          {% elif items[9]==3 %}
+          large
+          {% elif items[9]==4 %}
+          xlarge          
+          {% endif %} ~
+          </div>
+          <div style="display:inline-block;">${{ items[7] }}</div>
+        </div>
+        <img src="{{ items[4] }}" class="img-fluid border border-dark">
+      </div>
+    </div>
+  {% endfor %}
+</div>
+<div class="row justify-content-md-center">
+  <h2 class="container-fluid">Recently sold</h2>
+  {% for items in sold %}
+    <!--explaining the onclick... it adds an href which is a url to another page, plus also parameters-->
+    <div class="container-xl m-2" style="max-width:500px;">
+      <div onclick="location.href='{{ url_for('item',num=items[0],purchased=1) }}';" id="{{ items[0] }}" class="col-md-auto sold item" style="cursor: pointer;">
+        <div style="width:100%" class="p-1 border border-dark border-bottom-0">
+          <div style="display:inline-block;">{{ items[3] }} ~</div>
+          <div style="display:inline-block;">${{ items[7] }}</div>
+        </div>
+        <img src="{{ items[4] }}" class="img-fluid border border-dark">
+      </div>
+    </div>
+
+  {% endfor %}
+</div>
+  {% if admin %}
+    <div class="row justify-content-md-center">
+      <div class="col-md-auto border">
+        <h2>Successful Admin Login</h2>
+        <form action="/" method="post">
+          <div class="form-group">
+              <input autocomplete="off" autofocus class="form-control" name="title" placeholder="title" type="text">
+          </div>
+          <div class="form-group">
+              <input class="form-control" name="url" placeholder="Cover Image URL" type="text">
+          </div>
+          <div class="form-group">
+              <input class="form-control" name="url_2" placeholder="Alternate Image URL" type="text">
+          </div>
+          <div class="form-group">
+              <input class="form-control" name="url_3" placeholder="Alternate Image URL" type="text">
+          </div>
+          <div class="form-group">
+              <input class="form-control" name="price" placeholder="Price($)" type="text">
+          </div>
+          <div class="form-group">
+              <input class="form-control" name="size" placeholder="Size(0=xs,1=sm,2=md,etc)" type="text">
+          </div>
+          <div class="form-group">
+              <textarea style="resize:none;" class="form-control" name="description" rows="4" cols="50">Enter a description of the item.</textarea>
+          </div>
+          <div class="form-group form-check">
+            <input value="sold" type="checkbox" class="form-check-input" name="sold" id="sold">
+            <label class="form-check-label" for="sold">Sold?</label>
+          </div>
+          <button name="submit_button" class="btn btn-primary mb-2" type="submit" value="addItem">Add Item</button>
+        </form>
+      </div>
+    </div>
+  {% endif %}
+{% endblock %}
