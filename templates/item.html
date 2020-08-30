@@ -81,7 +81,7 @@ block main %}
         {% endif %}
 
         {% if admin and items[2]==None%}
-          <form action="/item/{{ items[0] }}/1" method="POST">
+          <form action="/item/{{ items[0] }}/1" method="GET">
             <button name="submit_button" class="btn btn-danger mb-3 p-2 btn-block" type="submit" value="add_to_cart">ADMIN: mark as sold</button>
           </form>
         {% endif %}

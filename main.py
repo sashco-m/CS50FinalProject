@@ -118,7 +118,7 @@ def index():
   else:
     connection = sqlite3.connect("stock.db", check_same_thread=False)
     cursor = connection.cursor()
-    #cursor.execute("DELETE FROM stock")
+    #cursor.execute("DELETE FROM stock WHERE id=13")
     cursor.execute("SELECT * FROM stock")
     #deletes all users quickly
     #cursor.execute("DELETE FROM users")
@@ -210,7 +210,7 @@ def item(num,purchased): #this id is passed from the index page
       cart=session.get("cart",[])
       numItems=len(cart)
 
-      return render_template("item.html",items=data[0],inCart=True,numItems=numItems,admin=session["admin"])
+      return render_template("item.html",items=data[0],inCart=True,numItems=numItems,admin=session.get("admin",False))
   else:
     connection = sqlite3.connect("stock.db", check_same_thread=False)
     cursor = connection.cursor()
@@ -233,7 +233,7 @@ def item(num,purchased): #this id is passed from the index page
     
     numItems=len(cart)
 
-    return render_template("item.html",items=data[0],inCart=inCart,numItems=numItems,admin=session["admin"])
+    return render_template("item.html",items=data[0],inCart=inCart,numItems=numItems,admin=session.get("admin",False))
 
 #login method borrowed from cs50 web track starter code
 @web_site.route("/login", methods=["GET", "POST"])

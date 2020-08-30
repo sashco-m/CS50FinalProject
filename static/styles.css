@@ -7,13 +7,14 @@
 }
 @keyframes test{
   0%{
-    font-size:0%;
+    color:white;
   }
   100%{
-    font-size:200%;
+    color:black;
   }
 }
 .test{
+  font-size:200%;
   width:400px;
   height:300px;
   margin:5px;
